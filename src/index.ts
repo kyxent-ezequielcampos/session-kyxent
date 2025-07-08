@@ -6,6 +6,10 @@ import { AnimalControllerService } from "./controllers/Animal.controller.service
 import { AnimalRoutes } from "./routes/Animal.routes"
 import cors from "cors"
 import { connect } from "mongoose"
+import { ShoeRepository } from "./repositories/ShoeRepository"
+import { ModelShoe } from "./models/Model.shoe"
+import { ShoeControllerService } from "./controllers/Shoe.controller.service"
+import { ShoesRoutes } from "./routes/Shoes.routes"
 
 class Server {
 
@@ -44,10 +48,20 @@ class Server {
 
         const routes = new AnimalRoutes(controller, Router())
 
+        // servicio de los zapatos
+        const repositorioZapatos = new ShoeRepository(ModelShoe)
+
+        const controladorZapatos = new ShoeControllerService(repositorioZapatos)
+
+        const rutasZapatos = new ShoesRoutes(controladorZapatos, Router())
+
         this.server.use(cors())
         this.server.use(json())
 
         this.server.use("/api", routes.initRoutes())
+        
+        // servicio de los zapatos
+        this.server.use("/api", rutasZapatos.initRouteShoes())
 
     }
 
